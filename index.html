@@ -181,7 +181,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            Startseite
+            Home
           </a>
         </li>
       
@@ -191,7 +191,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
-            Archiv
+            Archives
           </a>
         </li>
       
@@ -257,7 +257,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Veröffentlicht am</span>
+                <span class="post-meta-item-text">Posted on</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-23T17:17:08+08:00">
                 2017-11-23
@@ -321,6 +321,21 @@
 <p>继续往下走。</p>
 <h2 id="ResourceLoader"><a href="#ResourceLoader" class="headerlink" title="ResourceLoader"></a>ResourceLoader</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ResourceLoader resourceLoader = <span class="keyword">new</span> MultiLoader(classLoader);</span><br></pre></td></tr></table></figure>
 <p>我们发现，这个MultiLoader是个装饰器。（号称掌握设计模式的你，肯定懂吧，2333）。</p>
+<p>进入看，发现ClasspathResourceLoader和FileReourceLoader，都实现了ResourceLoader（注意这里有个interface）。</p>
+<p>进去看，ClasspathResourceLoader里面是ZipResource（jar包？），FileResourceLoader里面是FileResource（class文件？）。哇塞，好厉害，全猜对了。</p>
+<p>不要忘了你在看什么，cucumber命令行工具的实现过程，所以上一节的RuntimeOptions装配的就是入参咯（胆子大一点，猜错了怕啥。ORZ你又猜对了），那入参有了，出参呢？结果集在哪里输出呢？</p>
+<p>这个时候你应该退出debug模式，挑战一把run模式，666，老铁，console里看到了什么，结果！！是的，在看看target里面有没有新增的东西，有哎，有一个cucumber文件夹，打开，里面也是结果集？为啥，感觉结果集输出很丰富，对的，不牛逼能叫Cucumber（黄瓜）么？</p>
+<p>我相信，你看源码之前已经对Cucumber有过了解，我帖三篇入门文章，ibm developerworks 出品都是精品，没看的我建议你先去看完，然后再callback。谢谢。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">https://www.ibm.com/developerworks/cn/opensource/os-cn-bdd-web-ui-test/index.html</span><br><span class="line"></span><br><span class="line">https://www.ibm.com/developerworks/cn/java/j-local-Cucumber-high-level/index.html</span><br><span class="line"></span><br><span class="line">https://www.ibm.com/developerworks/cn/java/j-lo-cucumber01/</span><br></pre></td></tr></table></figure>
+<p>好的，相信你带着干粮已经回到了战场，那么我们继续冲锋。</p>
+<p>发现ResourceLoader、ResrouceIterable还有ResourceIteratorFactory，写的很6，读者应该学习这种写法。（学习之前先去理解，理解之后消化掉，这样在coder打怪升级的路上你就进步了！）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClasspathResourceIterable</span> <span class="keyword">implements</span> <span class="title">Iterable</span>&lt;<span class="title">Resource</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ResourceIteratorFactory resourceIteratorFactory =</span><br><span class="line">            <span class="keyword">new</span> DelegatingResourceIteratorFactory(<span class="keyword">new</span> ZipThenFileResourceIteratorFactory());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ClassLoader classLoader;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String path;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String suffix;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ClasspathResourceIterable</span><span class="params">(ClassLoader classLoader, String path, String suffix)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.classLoader = classLoader;</span><br><span class="line">        <span class="keyword">this</span>.path = path;</span><br><span class="line">        <span class="keyword">this</span>.suffix = suffix;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Iterator&lt;Resource&gt; <span class="title">iterator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            FlatteningIterator&lt;Resource&gt; iterator = <span class="keyword">new</span> FlatteningIterator&lt;Resource&gt;();</span><br><span class="line">            Enumeration&lt;URL&gt; resources = classLoader.getResources(path);</span><br><span class="line">            <span class="keyword">while</span> (resources.hasMoreElements()) &#123;</span><br><span class="line">                URL url = resources.nextElement();</span><br><span class="line">                Iterator&lt;Resource&gt; resourceIterator = resourceIteratorFactory.createIterator(url, path, suffix);</span><br><span class="line">                iterator.push(resourceIterator);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> iterator;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> CucumberException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>是不是应该在iterator里面打个断点，观察一把啊。</p>
+<p>就是把Resource装配成迭代器，然后去调用，什么时候去调用呢？（恭喜你，学会提问了。）</p>
+<p>回到Main class，发现下面是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ClassFinder classFinder = <span class="keyword">new</span> ResourceLoaderClassFinder(resourceLoader, classLoader);</span><br></pre></td></tr></table></figure>
+<p>从字面上看，这肯定是反编译咯。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ResourceLoaderClassFinder</span> <span class="keyword">implements</span> <span class="title">ClassFinder</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ResourceLoader resourceLoader;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ClassLoader classLoader;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ResourceLoaderClassFinder</span><span class="params">(ResourceLoader resourceLoader, ClassLoader classLoader)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.resourceLoader = resourceLoader;</span><br><span class="line">        <span class="keyword">this</span>.classLoader = classLoader;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> &lt;T&gt; Collection&lt;Class&lt;? extends T&gt;&gt; getDescendants(Class&lt;T&gt; parentType, String packageName) &#123;</span><br><span class="line">        Collection&lt;Class&lt;? extends T&gt;&gt; result = <span class="keyword">new</span> HashSet&lt;Class&lt;? extends T&gt;&gt;();</span><br><span class="line">        String packagePath = <span class="string">"classpath:"</span> + packageName.replace(<span class="string">'.'</span>, <span class="string">'/'</span>).replace(File.separatorChar, <span class="string">'/'</span>);</span><br><span class="line">        <span class="keyword">for</span> (Resource classResource : resourceLoader.resources(packagePath, <span class="string">".class"</span>)) &#123;</span><br><span class="line">            String className = classResource.getClassName(<span class="string">".class"</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Class&lt;?&gt; clazz = loadClass(className);</span><br><span class="line">                <span class="keyword">if</span> (clazz != <span class="keyword">null</span> &amp;&amp; !parentType.equals(clazz) &amp;&amp; parentType.isAssignableFrom(clazz)) &#123;</span><br><span class="line">                    result.add(clazz.asSubclass(parentType));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (ClassNotFoundException ignore) &#123;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (NoClassDefFoundError ignore) &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> &lt;T&gt; Class&lt;? extends T&gt; loadClass(String className) <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">        <span class="keyword">return</span> (Class&lt;? extends T&gt;) classLoader.loadClass(className);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
           
         
@@ -398,7 +413,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Veröffentlicht am</span>
+                <span class="post-meta-item-text">Posted on</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-22T17:59:29+08:00">
                 2017-11-22
@@ -531,7 +546,7 @@
                 <a href="/archives/">
               
                   <span class="site-state-item-count">2</span>
-                  <span class="site-state-item-name">Artikel</span>
+                  <span class="site-state-item-name">posts</span>
                 </a>
               </div>
             
@@ -544,7 +559,7 @@
               <div class="site-state-item site-state-tags">
                 
                   <span class="site-state-item-count">1</span>
-                  <span class="site-state-item-name">Tags</span>
+                  <span class="site-state-item-name">tags</span>
                 
               </div>
             
@@ -592,7 +607,7 @@
 </div>
 
 
-  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
 
 
 
