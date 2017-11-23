@@ -86,7 +86,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/11/23/Cucumber源码解析/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="Cucumber是一个自动化测试的解决方案，功能完备。  A single source of truth Living documentation Focus on the customer Less rework  传送门： https://cucumber.io Cucumber有cucumber-jvm（core、spring、java）等组件，笔者重点调研了cucumber-core，下">
-<meta property="og:updated_time" content="2017-11-23T10:43:44.000Z">
+<meta property="og:updated_time" content="2017-11-23T10:45:28.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cucumber源码解析">
 <meta name="twitter:description" content="Cucumber是一个自动化测试的解决方案，功能完备。  A single source of truth Living documentation Focus on the customer Less rework  传送门： https://cucumber.io Cucumber有cucumber-jvm（core、spring、java）等组件，笔者重点调研了cucumber-core，下">
@@ -347,6 +347,8 @@
 <p>因为版本的差异，我们看到runtime需要跟多属性，resourceLoader、classLoader、runtimeOptions、gule、stats、bus、runner、filters等等，不要那么实在，捡着你能看懂的看，看不懂的绕过去，得绕不过去的时候，再回来看。</p>
 <p>反正，RunTime终于init完毕了，那么下面就该run了吧。</p>
 <h2 id="RunSteps"><a href="#RunSteps" class="headerlink" title="RunSteps"></a>RunSteps</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="comment">// Make sure all features parse before initialising any reporters/formatters</span></span><br><span class="line">    List&lt;CucumberFeature&gt; features = runtimeOptions.cucumberFeatures(resourceLoader, bus);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> This is duplicated in cucumber.api.android.CucumberInstrumentationCore - refactor or keep uptodate</span></span><br><span class="line"></span><br><span class="line">    StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);</span><br><span class="line"></span><br><span class="line">    reportStepDefinitions(stepDefinitionReporter);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (CucumberFeature cucumberFeature : features) &#123;</span><br><span class="line">      runFeature(cucumberFeature);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    bus.send(<span class="keyword">new</span> TestRunFinished(bus.getTime()));</span><br><span class="line">    printSummary();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>先要吧CucumberFeature搞进来，然后再去runFeature，这里要重点介绍一下了。</p>
+<p>未完待续，下班回家。回头更。</p>
 
       
     </div>
