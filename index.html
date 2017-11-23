@@ -181,7 +181,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            Home
+            Startseite
           </a>
         </li>
       
@@ -191,7 +191,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
-            Archives
+            Archiv
           </a>
         </li>
       
@@ -257,7 +257,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">Veröffentlicht am</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-23T17:17:08+08:00">
                 2017-11-23
@@ -333,9 +333,20 @@
 <p>是不是应该在iterator里面打个断点，观察一把啊。</p>
 <p>就是把Resource装配成迭代器，然后去调用，什么时候去调用呢？（恭喜你，学会提问了。）</p>
 <p>回到Main class，发现下面是：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ClassFinder classFinder = <span class="keyword">new</span> ResourceLoaderClassFinder(resourceLoader, classLoader);</span><br></pre></td></tr></table></figure>
+<h2 id="ResourceLoaderClassFinder"><a href="#ResourceLoaderClassFinder" class="headerlink" title="ResourceLoaderClassFinder"></a>ResourceLoaderClassFinder</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ClassFinder classFinder = <span class="keyword">new</span> ResourceLoaderClassFinder(resourceLoader, classLoader);</span><br></pre></td></tr></table></figure>
 <p>从字面上看，这肯定是反编译咯。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ResourceLoaderClassFinder</span> <span class="keyword">implements</span> <span class="title">ClassFinder</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ResourceLoader resourceLoader;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ClassLoader classLoader;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ResourceLoaderClassFinder</span><span class="params">(ResourceLoader resourceLoader, ClassLoader classLoader)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.resourceLoader = resourceLoader;</span><br><span class="line">        <span class="keyword">this</span>.classLoader = classLoader;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> &lt;T&gt; Collection&lt;Class&lt;? extends T&gt;&gt; getDescendants(Class&lt;T&gt; parentType, String packageName) &#123;</span><br><span class="line">        Collection&lt;Class&lt;? extends T&gt;&gt; result = <span class="keyword">new</span> HashSet&lt;Class&lt;? extends T&gt;&gt;();</span><br><span class="line">        String packagePath = <span class="string">"classpath:"</span> + packageName.replace(<span class="string">'.'</span>, <span class="string">'/'</span>).replace(File.separatorChar, <span class="string">'/'</span>);</span><br><span class="line">        <span class="keyword">for</span> (Resource classResource : resourceLoader.resources(packagePath, <span class="string">".class"</span>)) &#123;</span><br><span class="line">            String className = classResource.getClassName(<span class="string">".class"</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Class&lt;?&gt; clazz = loadClass(className);</span><br><span class="line">                <span class="keyword">if</span> (clazz != <span class="keyword">null</span> &amp;&amp; !parentType.equals(clazz) &amp;&amp; parentType.isAssignableFrom(clazz)) &#123;</span><br><span class="line">                    result.add(clazz.asSubclass(parentType));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (ClassNotFoundException ignore) &#123;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (NoClassDefFoundError ignore) &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> &lt;T&gt; Class&lt;? extends T&gt; loadClass(String className) <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">        <span class="keyword">return</span> (Class&lt;? extends T&gt;) classLoader.loadClass(className);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个时候你发现它在反编译cucumber.runtime的jar包，感觉是在搭台子，让你唱戏的节奏？</p>
+<p>是不是该补一下java类加载机制相关的知识了？</p>
+<p>看了这么久，重头戏还没到，前戏也太久了吧。客官，来啦~</p>
+<h2 id="RunTime"><a href="#RunTime" class="headerlink" title="RunTime"></a>RunTime</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Runtime</span><span class="params">(ResourceLoader resourceLoader, ClassFinder classFinder, ClassLoader classLoader, RuntimeOptions runtimeOptions)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">this</span>(resourceLoader, classLoader, loadBackends(resourceLoader, classFinder), runtimeOptions);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>这里有一个loadBackends，跟进入看，发现反编译出来的是JavaBackend，这个很重要，因为你绕不开，为啥，因为这里报错了。</p>
+<p><strong>那怎么样才能不报错呢，请你再新建一个project，import cucumber-core，然后准备好features steps，然后再debug走起，不过那时候你只能看jar包了，好不过瘾，可以结合jar包和源码一起看，坑爹啊，而且两个版本不一致，你可以试着自己deploy一个版本的jar包。</strong></p>
+<p>短短三行，我觉得你如果是个菜鸟的话，你可能要搞2-3个小时，如果你真的认真阅读了ibm的那三篇文章，我相信1个小时你就能搞定了。怎么样，“学有所得，不学不得”的感觉爽不爽啊。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Runtime</span><span class="params">(ResourceLoader resourceLoader, ClassLoader classLoader, Collection&lt;? extends Backend&gt; backends,</span></span></span><br><span class="line"><span class="function"><span class="params">                RuntimeOptions runtimeOptions, TimeService stopWatch, Glue optionalGlue)</span> </span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (backends.isEmpty()) &#123;</span><br><span class="line">     <span class="keyword">throw</span> <span class="keyword">new</span> CucumberException(<span class="string">"No backends were found. Please make sure you have a backend module on your CLASSPATH."</span>);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">this</span>.resourceLoader = resourceLoader;</span><br><span class="line">   <span class="keyword">this</span>.classLoader = classLoader;</span><br><span class="line">   <span class="keyword">this</span>.runtimeOptions = runtimeOptions;</span><br><span class="line">   <span class="keyword">final</span> Glue glue;</span><br><span class="line">   glue = optionalGlue == <span class="keyword">null</span> ? <span class="keyword">new</span> RuntimeGlue(<span class="keyword">new</span> LocalizedXStreams(classLoader)) : optionalGlue;</span><br><span class="line">   <span class="keyword">this</span>.stats = <span class="keyword">new</span> Stats(runtimeOptions.isMonochrome());</span><br><span class="line">   <span class="keyword">this</span>.bus = <span class="keyword">new</span> EventBus(stopWatch);</span><br><span class="line">   <span class="keyword">this</span>.runner = <span class="keyword">new</span> Runner(glue, bus, backends, runtimeOptions);</span><br><span class="line">   <span class="keyword">this</span>.filters = <span class="keyword">new</span> ArrayList&lt;PicklePredicate&gt;();</span><br><span class="line">   List&lt;String&gt; tagFilters = runtimeOptions.getTagFilters();</span><br><span class="line">   <span class="keyword">if</span> (!tagFilters.isEmpty()) &#123;</span><br><span class="line">     <span class="keyword">this</span>.filters.add(<span class="keyword">new</span> TagPredicate(tagFilters));</span><br><span class="line">   &#125;</span><br><span class="line">   List&lt;Pattern&gt; nameFilters = runtimeOptions.getNameFilters();</span><br><span class="line">   <span class="keyword">if</span> (!nameFilters.isEmpty()) &#123;</span><br><span class="line">     <span class="keyword">this</span>.filters.add(<span class="keyword">new</span> NamePredicate(nameFilters));</span><br><span class="line">   &#125;</span><br><span class="line">   Map&lt;String, List&lt;Long&gt;&gt; lineFilters = runtimeOptions.getLineFilters(resourceLoader);</span><br><span class="line">   <span class="keyword">if</span> (!lineFilters.isEmpty()) &#123;</span><br><span class="line">     <span class="keyword">this</span>.filters.add(<span class="keyword">new</span> LinePredicate(lineFilters));</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   stats.setEventPublisher(bus);</span><br><span class="line">   undefinedStepsTracker.setEventPublisher(bus);</span><br><span class="line">   runtimeOptions.setEventBus(bus);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>因为版本的差异，我们看到runtime需要跟多属性，resourceLoader、classLoader、runtimeOptions、gule、stats、bus、runner、filters等等，不要那么实在，捡着你能看懂的看，看不懂的绕过去，得绕不过去的时候，再回来看。</p>
+<p>反正，RunTime终于init完毕了，那么下面就该run了吧。</p>
+<h2 id="RunSteps"><a href="#RunSteps" class="headerlink" title="RunSteps"></a>RunSteps</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="comment">// Make sure all features parse before initialising any reporters/formatters</span></span><br><span class="line">    List&lt;CucumberFeature&gt; features = runtimeOptions.cucumberFeatures(resourceLoader, bus);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> This is duplicated in cucumber.api.android.CucumberInstrumentationCore - refactor or keep uptodate</span></span><br><span class="line"></span><br><span class="line">    StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);</span><br><span class="line"></span><br><span class="line">    reportStepDefinitions(stepDefinitionReporter);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (CucumberFeature cucumberFeature : features) &#123;</span><br><span class="line">      runFeature(cucumberFeature);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    bus.send(<span class="keyword">new</span> TestRunFinished(bus.getTime()));</span><br><span class="line">    printSummary();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 
           
         
@@ -413,7 +424,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">Veröffentlicht am</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-22T17:59:29+08:00">
                 2017-11-22
@@ -546,7 +557,7 @@
                 <a href="/archives/">
               
                   <span class="site-state-item-count">2</span>
-                  <span class="site-state-item-name">posts</span>
+                  <span class="site-state-item-name">Artikel</span>
                 </a>
               </div>
             
@@ -559,7 +570,7 @@
               <div class="site-state-item site-state-tags">
                 
                   <span class="site-state-item-count">1</span>
-                  <span class="site-state-item-name">tags</span>
+                  <span class="site-state-item-name">Tags</span>
                 
               </div>
             
@@ -607,7 +618,7 @@
 </div>
 
 
-  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
 
 
 
