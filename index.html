@@ -307,6 +307,10 @@
 <li>Less rework</li>
 </ul>
 <p>传送门： <a href="https://cucumber.io" target="_blank" rel="noopener">https://cucumber.io</a></p>
+<p>Cucumber有cucumber-jvm（core、spring、java）等组件，笔者重点调研了cucumber-core，下面就给读者分享一下该组件的阅读心得。</p>
+<p>看源码，我们得有正确的打开方式（找到一个入口），试图去了解它的脉络，再去发现有没有interface暴露出来，然后按照我们的业务场景进行扩展。更高的追求是，找到源码中不顺畅的地方，为开源做贡献（⛽️）。</p>
+<h2 id="找到入口"><a href="#找到入口" class="headerlink" title="找到入口"></a>找到入口</h2><p>一般java项目，都会有一个xxxMain的入口，巧得很，cucumber-core有一个Main的class。就是它了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># Some heading</span><br><span class="line"></span><br><span class="line">Collapsing `#` should collapse all lower level headings; `##`, `###`, etc.</span><br><span class="line"></span><br><span class="line">## Another heading</span><br><span class="line"></span><br><span class="line">Collapsing `##` should collapse all lower level headings; `###`, `####`, etc.</span><br><span class="line"></span><br><span class="line">### Another heading</span><br><span class="line"></span><br><span class="line">And so on...</span><br></pre></td></tr></table></figure>
 
           
         
