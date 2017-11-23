@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="源码分析," />
 
 
 
@@ -79,12 +79,17 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/archives/2017/11/index.html">
+<meta name="description" content="Cucumber是一个自动化测试的解决方案，功能完备。  A single source of truth Living documentation Focus on the customer Less rework  传送门： https://cucumber.io">
+<meta name="keywords" content="源码分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cucumber源码解析">
+<meta property="og:url" content="http://yoursite.com/2017/11/23/Cucumber源码解析/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Cucumber是一个自动化测试的解决方案，功能完备。  A single source of truth Living documentation Focus on the customer Less rework  传送门： https://cucumber.io">
+<meta property="og:updated_time" content="2017-11-23T09:20:49.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="Cucumber源码解析">
+<meta name="twitter:description" content="Cucumber是一个自动化测试的解决方案，功能完备。  A single source of truth Living documentation Focus on the customer Less rework  传送门： https://cucumber.io">
 
 
 
@@ -114,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/2017/11/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/11/23/Cucumber源码解析/"/>
 
 
 
 
 
-  <title>Archiv | Hexo</title>
+  <title>Cucumber源码解析 | Hexo</title>
   
 
 
@@ -139,7 +144,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -213,111 +218,154 @@
           <div id="content" class="content">
             
 
+  <div id="posts" class="posts-expand">
+    
+
+  
+
   
   
   
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
-
-      <span class="archive-page-counter">
-        
-        
-        
-          
-        
-        Öhm..! Insgesamt 2 Artikel. Bleib dran.
-      </span>
-
-      
-
-        
-        
-        
-
-        
-          
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2017">2017</h1>
-          </div>
-        
-        
-
-        
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/23/Cucumber源码解析/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2017/11/23/Cucumber源码解析/" itemprop="url">
-              
-                <span itemprop="name">Cucumber源码解析</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">Cucumber源码解析</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-11-23T17:17:08+08:00"
-              content="2017-11-23" >
-          11-23
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-23T17:17:08+08:00">
+                2017-11-23
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
 
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/11/22/hello-world/" itemprop="url">
-              
-                <span itemprop="name">Hello World</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-11-22T17:59:29+08:00"
-              content="2017-11-22" >
-          11-22
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
+      
+        <p>Cucumber是一个自动化测试的解决方案，功能完备。</p>
+<ul>
+<li>A single source of truth</li>
+<li>Living documentation</li>
+<li>Focus on the customer</li>
+<li>Less rework</li>
+</ul>
+<p>传送门： <a href="https://cucumber.io" target="_blank" rel="noopener">https://cucumber.io</a></p>
+
+      
     </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/源码分析/" rel="tag"># 源码分析</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/22/hello-world/" rel="next" title="Hello World">
+                <i class="fa fa-chevron-left"></i> Hello World
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -325,6 +373,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -532,6 +584,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
 
   
 
